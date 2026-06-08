@@ -1,0 +1,98 @@
+name: development
+
+services:
+  rabbitmq:
+    container_name: rabbitmq
+    image: rabbitmq:4.3.0-management-alpine
+    restart: unless-stopped
+    ports:
+      - 15672:5672
+      - 15673:15672
+    environment:
+      - RABBITMQ_DEFAULT_USER=root
+      - RABBITMQ_DEFAULT_PASS=password
+    networks:
+      - development
+    volumes:
+      - rabbitmq-data:/var/lib/rabbitmq
+
+  postgres:
+    container_name: postgres
+    image: postgres:18-alpine
+    restart: unless-stopped
+    ports:
+      - 5432:5432
+    environment:
+      - POSTGRES_PASSWORD=password
+    volumes:
+      - postgres-data:/var/lib/postgresql
+    networks:
+      - development
+
+  mongo:
+    container_name: mongo
+    image: mongo:8
+    restart: unless-stopped
+    ports:
+      - "27017:27017"
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=root
+      - MONGO_INITDB_ROOT_PASSWORD=password
+    volumes:
+      - mongo-data:/data/db
+    networks:
+      - development
+
+  minio:
+    container_name: minio
+    image: minio/minio:RELEASE.2025-04-22T22-12-26Z
+    restart: unless-stopped
+    ports:
+      - "9000:9000"
+      - "9001:9001"
+    environment:
+      - MINIO_ROOT_USER=root
+      - MINIO_ROOT_PASSWORD=password
+    command: server /data --console-address ":9001"
+    volumes:
+      - minio-data:/data
+    networks:
+      - development
+
+  redis:
+    container_name: redis
+    image: redis:8-alpine
+    restart: unless-stopped
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis-data:/data
+    networks:
+      - development
+
+  clickhouse:
+    image: clickhouse/clickhouse-server:26.5-alpine
+    container_name: clickhouse
+    restart: unless-stopped
+    environment:
+      - CLICKHOUSE_USER=default
+      - CLICKHOUSE_PASSWORD=password
+    ports:
+      - "8123:8123"
+      - "8124:9000"
+    volumes:
+      - clickhouse-data:/var/lib/clickhouse
+    networks:
+      - development
+
+networks:
+  development:
+    name: development
+
+volumes:
+  rabbitmq-data:
+  postgres-data:
+  mongo-data:
+  minio-data:
+  redis-data:
+  clickhouse-data:
