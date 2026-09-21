@@ -70,6 +70,17 @@ services:
     networks:
       - development
 
+  redisinsight:
+    container_name: redisinsight
+    image: redis/redisinsight:3.8.0
+    restart: unless-stopped
+    ports:
+      - "5540:5540"
+    volumes:
+      - redisinsight-data:/data
+    networks:
+      - development
+
   clickhouse:
     image: clickhouse/clickhouse-server:26.5-alpine
     container_name: clickhouse
@@ -161,6 +172,7 @@ volumes:
   mongo-data:
   minio-data:
   redis-data:
+  redisinsight-data:
   clickhouse-data:
   mailpit-data:
   kafka-data:
