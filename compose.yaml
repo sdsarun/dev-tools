@@ -45,7 +45,7 @@ services:
 
   minio:
     container_name: minio
-    image: minio/minio:RELEASE.2025-04-22T22-12-26Z
+    image: quay.io/minio/aistor/minio:RELEASE.2026-09-19T17-05-25Z
     restart: unless-stopped
     ports:
       - "9000:9000"
