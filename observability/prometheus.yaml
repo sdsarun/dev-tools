@@ -1,0 +1,18 @@
+global:
+  scrape_interval: 15s
+
+storage:
+  tsdb:
+    # Batches from independent apps can arrive out of timestamp order.
+    out_of_order_time_window: 5m
+
+otlp:
+  translation_strategy: UnderscoreEscapingWithSuffixes
+  promote_resource_attributes:
+    - service.name
+    - service.namespace
+    - service.instance.id
+    - deployment.environment.name
+
+# Applications push metrics via the collector; infrastructure scraping is separate.
+scrape_configs: []

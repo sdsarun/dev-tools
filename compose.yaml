@@ -162,6 +162,78 @@ services:
     networks:
       - development
 
+  grafana:
+    container_name: grafana
+    image: grafana/grafana:13.2.3
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    environment:
+      - GF_SECURITY_ADMIN_USER=admin
+      - GF_SECURITY_ADMIN_PASSWORD=password
+    volumes:
+      - grafana-data:/var/lib/grafana
+    networks:
+      - development
+
+  otel-collector:
+    container_name: otel-collector
+    image: otel/opentelemetry-collector-contrib:0.162.0
+    restart: unless-stopped
+    command: ["--config=/etc/otelcol-contrib/config.yaml"]
+    ports:
+      - "4317:4317"
+      - "4318:4318"
+    volumes:
+      - ./observability/otel-collector.yaml:/etc/otelcol-contrib/config.yaml:ro
+    networks:
+      - development
+
+  prometheus:
+    container_name: prometheus
+    image: prom/prometheus:v3.15.0
+    restart: unless-stopped
+    ports:
+      - "9090:9090"
+    command:
+      - --config.file=/etc/prometheus/prometheus.yaml
+      - --storage.tsdb.path=/prometheus
+      - --storage.tsdb.retention.time=7d
+      - --web.enable-otlp-receiver
+    volumes:
+      - prometheus-data:/prometheus
+      - ./observability/prometheus.yaml:/etc/prometheus/prometheus.yaml:ro
+    networks:
+      - development
+
+  loki:
+    container_name: loki
+    image: grafana/loki:3.7.8
+    restart: unless-stopped
+    ports:
+      - "3100:3100"
+    command: ["-config.file=/etc/loki/config.yaml"]
+    volumes:
+      - loki-data:/loki
+      - ./observability/loki.yaml:/etc/loki/config.yaml:ro
+    networks:
+      - development
+
+  tempo:
+    container_name: tempo
+    image: grafana/tempo:2.10.8
+    restart: unless-stopped
+    ports:
+      - "3200:3200"
+      - "14317:4317"
+      - "14318:4318"
+    command: ["-config.file=/etc/tempo/config.yaml"]
+    volumes:
+      - tempo-data:/var/tempo
+      - ./observability/tempo.yaml:/etc/tempo/config.yaml:ro
+    networks:
+      - development
+
 networks:
   development:
     name: development
@@ -176,3 +248,7 @@ volumes:
   clickhouse-data:
   mailpit-data:
   kafka-data:
+  grafana-data:
+  prometheus-data:
+  loki-data:
+  tempo-data:
