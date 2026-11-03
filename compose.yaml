@@ -43,22 +43,6 @@ services:
     networks:
       - development
 
-  minio:
-    container_name: minio
-    image: quay.io/minio/aistor/minio:RELEASE.2026-09-19T17-05-25Z
-    restart: unless-stopped
-    ports:
-      - "9000:9000"
-      - "9001:9001"
-    environment:
-      - MINIO_ROOT_USER=root
-      - MINIO_ROOT_PASSWORD=password
-    command: server /data --console-address ":9001"
-    volumes:
-      - minio-data:/data
-    networks:
-      - development
-
   redis:
     container_name: redis
     image: redis:8-alpine
