@@ -43,6 +43,29 @@ services:
     networks:
       - development
 
+  seaweedfs:
+    container_name: seaweedfs
+    image: chrislusf/seaweedfs:4.55
+    restart: unless-stopped
+    ports:
+      - "7333:7333"
+      - "8181:8181"
+      - "8333:8333"
+      - "8888:8888"
+      - "9101:9101"
+      - "9333:9333"
+      - "9340:9340"
+      - "12535:12535"
+    environment:
+      - AWS_ACCESS_KEY_ID=admin
+      - AWS_SECRET_ACCESS_KEY=password
+      - WEED_ADMIN_PASSWORD=password
+      - S3_BUCKET=dev-bucket
+    volumes:
+      - seaweedfs-data:/data
+    networks:
+      - development
+
   redis:
     container_name: redis
     image: redis:8-alpine
@@ -227,6 +250,7 @@ volumes:
   postgres-data:
   mongo-data:
   minio-data:
+  seaweedfs-data:
   redis-data:
   redisinsight-data:
   clickhouse-data:
