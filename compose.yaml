@@ -66,6 +66,22 @@ services:
     networks:
       - development
 
+  minio:
+    container_name: minio
+    image: cgr.dev/chainguard/minio@sha256:f2e56aceb4d38ad9b05c901270946e2353b19f86ba4396f25cf75b15b455b38c
+    restart: unless-stopped
+    ports:
+      - "9000:9000"
+      - "9001:9001"
+    environment:
+      - MINIO_ROOT_USER=admin
+      - MINIO_ROOT_PASSWORD=password
+    command: server /data --console-address ":9001"
+    volumes:
+      - chainguard-minio-data:/data
+    networks:
+      - development
+
   redis:
     container_name: redis
     image: redis:8-alpine
@@ -249,8 +265,8 @@ volumes:
   rabbitmq-data:
   postgres-data:
   mongo-data:
-  minio-data:
   seaweedfs-data:
+  chainguard-minio-data:
   redis-data:
   redisinsight-data:
   clickhouse-data:
